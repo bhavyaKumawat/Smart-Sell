@@ -14,6 +14,7 @@ def get_response_template():
             }
         },
         "store": {
+            "LocationId": "",
             "Rest_Number": "",
             "SmartSellAmount": 0.0,
             "SuccessSmartSellCount": 0,

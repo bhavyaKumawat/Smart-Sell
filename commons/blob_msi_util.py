@@ -44,3 +44,15 @@ async def read_blob(container_name: str, blob_name: str) -> str:
     except Exception as ex:
         logger.exception(f'Exception while reading Blob: {ex!r}')
         return '{}'
+
+
+async def read_blob_as_bytes(container_name: str, blob_name: str):
+    try:
+        blob_client = get_blob_client(container_name, blob_name)
+        blob_data = await blob_client.download_blob()
+        blob_byte_data = await blob_data.content_as_bytes()
+        return blob_byte_data
+    except Exception as ex:
+        logger.exception(f'Exception while reading Blob: {ex!r}')
+        return bytes()
+

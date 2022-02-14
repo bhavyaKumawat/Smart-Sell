@@ -1,0 +1,42 @@
+tasks.replace("copy", Copy).configure {
+    copy {
+        from("src") {
+            include 'Dockerfile'
+
+            filter { it.replaceAll('@dockerRegistry', dockerRegistry) }
+            filter { it.replaceAll('@ImageBaseAppPython39', ImageBaseAppPython39) }
+        }
+        into("build")
+    }
+    copy {
+        from("../../") {
+            include '.dockerignore'
+            include 'requirements.txt'
+        }
+        into("build")
+    }
+    copy {
+        from("../../commons")
+        into("build/commons")
+    }
+    copy {
+        from("../../models")
+        into("build/models")
+    }
+    copy {
+        from("../../models")
+        into("build/models")
+    }
+    copy {
+        from("../../lb_processor_svc")
+        into("build/lb_processor_svc")
+    }
+    copy {
+        from("../../lb_user_svc")
+        into("build/lb_user_svc")
+    }
+    copy {
+        from("../../ss_ingest")
+        into("build/ss_ingest")
+    }
+}

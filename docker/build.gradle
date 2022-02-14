@@ -1,0 +1,3 @@
+apply from: "conf.gradle"
+
+apply from: "${rootDir}/${download_path}/${common_path}/buildDocker.groovy"

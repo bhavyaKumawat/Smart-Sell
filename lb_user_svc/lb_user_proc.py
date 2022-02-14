@@ -1,5 +1,6 @@
 import asyncio
 import os
+import logging
 
 from lb_user_svc.helpers.fran_helper import read_fran_cont, read_fran_emp_cont, \
     get_emp_network_rank, get_store_rank
@@ -9,15 +10,42 @@ import pprint
 from lb_user_svc.helpers.store_helper import read_store_cont, get_emp_rank, get_emp, get_store
 from lb_user_svc.helpers.utils import get_top
 
+
+from lb_user_svc.helpers.utils import find_rec_json
+
 container_name = os.environ["lb_container_name"]
 sort_by_col = 'SuccessSmartSellCount'
 
 
-async def lb_dash_start(emp_id: str, store_id: str, fran_id: str, rank_mode: str):
+logger = logging.getLogger()
+
+
+async def get_franchisee_id_by_till(till_no: int, store_df):
+    rec_json = find_rec_json(till_no, "TillNumber", store_df)
+    logger.debug(f'rec_json{rec_json} store_df {store_df}....')
+    return rec_json[0]["FranchiseeId"]
+
+
+async def get_franchisee_id_by_emp(emp_id: str, store_df):
+    rec_json = find_rec_json(emp_id, "EmployeeId", store_df)
+    logger.debug(f'rec_json{rec_json} store_df {store_df}....')
+    return rec_json[0]["FranchiseeId"]
+
+
+async def lb_dash_start( loc_id: str, till_no: int, rank_mode: str, emp_id: str = ""):
     top_count = 10
-    store_df, fran_df, fran_emp_df = await asyncio.gather(read_store_cont(store_id, rank_mode),
-                                                          read_fran_cont(fran_id, rank_mode),
-                                                          read_fran_emp_cont(fran_id, rank_mode))
+    loc_id = loc_id.upper()
+
+    store_df = await read_store_cont(loc_id, rank_mode)
+
+    if emp_id == "":
+        fran_id = await get_franchisee_id_by_till(till_no, store_df)
+    else:
+        fran_id = await get_franchisee_id_by_till(emp_id, store_df)
+
+    fran_df, fran_emp_df = await asyncio.gather(read_fran_cont(fran_id, rank_mode),
+                                                read_fran_emp_cont(fran_id, rank_mode))
+
     response_json = get_response_template()
 
     if not store_df.empty:
@@ -37,8 +65,8 @@ async def lb_dash_start(emp_id: str, store_id: str, fran_id: str, rank_mode: str
         response_json["top_emp_in_store"] = top_emp
 
     if not fran_df.empty:
-        store = get_store(store_id, fran_df)
-        st_in_fran_rank = get_store_rank(store_id, fran_df)
+        store = get_store(loc_id, fran_df)
+        st_in_fran_rank = get_store_rank(loc_id, fran_df)
         response_json["store"] = store[0]
         response_json["store"]["rank"] = {
             "network": st_in_fran_rank

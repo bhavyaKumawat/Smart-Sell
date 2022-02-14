@@ -1,0 +1,21 @@
+tasks.replace("copy", Copy).configure {
+    copy {
+        from("../../build") {
+            exclude 'Dockerfile'
+        }
+        into("build")
+    }
+    copy {
+        from("../../resources/db")
+        into("build")
+    }
+    copy {
+        from("src") {
+            include 'Dockerfile'
+
+            filter { it.replaceAll('@dockerRegistry', dockerRegistry) }
+            filter { it.replaceAll('@ImageSqlMigrationExecutor', ImageSqlMigrationExecutor) }
+        }
+        into("build")
+    }
+}

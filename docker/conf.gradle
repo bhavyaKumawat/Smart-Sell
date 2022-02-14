@@ -1,0 +1,5 @@
+ext {
+    download_path = System.getenv('GRADLE_DOWNLOAD_PATH') ?: "gradle/lib"
+    common_tag = System.getenv('GRADLE_COMMON_TAG') ?: System.getenv('SCRIPTS_BRANCH')
+    common_path = System.getenv('GRADLE_COMMON_PATH') ?: "gradle/gradle-common"
+}

@@ -7,7 +7,7 @@ from azure.identity import DefaultAzureCredential
 from azure.servicebus import ServiceBusClient
 from azure.servicebus.exceptions import ServiceBusAuthorizationError
 from commons.blob_msi_util import blob_exists, read_blob, write_sm_blob
-from commons.utils import get_store_key, get_fran_key, get_store_id, get_fran_emp_key
+from commons.utils import get_store_key, get_fran_key, get_loc_id, get_fran_emp_key
 from azure.core.exceptions import ClientAuthenticationError
 import asyncio
 
@@ -32,7 +32,7 @@ async def process_store(sm_element_str: str):
 async def process_fran(sm_element: Dict,
                        store_container_json: Dict):
     fran_key = get_fran_key(sm_element)
-    store_id = get_store_id(sm_element)
+    store_id = get_loc_id(sm_element)
     await perform_fran_blob_ops(fran_key,
                                 store_id,
                                 store_container_json)

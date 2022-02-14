@@ -9,7 +9,7 @@ class Rank(BaseModel):
 
 
 class Store(BaseModel):
-    LocationId: str
+    LocationId: Optional[str]
     Rest_Number: Optional[str]
     SmartSellAmount: float
     SuccessSmartSellCount: int
@@ -19,7 +19,7 @@ class Store(BaseModel):
 
 
 class Employee(BaseModel):
-    EmployeeId: str
+    EmployeeId: Optional[str]
     EmployeeName: Optional[str]
     Rest_Number: Optional[str]
     SmartSellAmount: float

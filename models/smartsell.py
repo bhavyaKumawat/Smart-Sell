@@ -1,22 +1,24 @@
 from pydantic import BaseModel
+from typing import Optional
 
 
 class SmartSell(BaseModel):
-    Id: str
+    Id: int
     TransactionId: str
     OrderId: str
-    SmartSellItemId: str
+    SmartSellItemId: Optional[str]
     SmartSellLinkedItemId: str
     SmartSellDeclined: int
     SmartSellAmount: float
-    SmartSellGroupId: int
+    SmartSellGroupId: Optional[int]
     RuleId: int
     TransactionDateTime: str
     TerminalId: int
     TerminalName: str
     LocationId: str
     IsSent: int
-    EmployeeName: str
-    EmployeeId: str
-    Rest_Number: str
+    EmployeeName: Optional[str]
+    EmployeeId: Optional[str]
+    Rest_Number: Optional[str]
     CrewSmartSellTimeInMs: int
+    TillNumber: int

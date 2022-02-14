@@ -1,0 +1,29 @@
+plugins {
+    id 'com.alexvasilkov.git-dependencies' version '2.0.1'
+}
+
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
+apply from: "conf.gradle"
+
+if ( common_tag == null ) {
+   throw new GradleException('GRADLE_COMMON_TAG is empty or does not exist')
+}
+
+def release_match = common_tag =~ /^\d+\.\d+\.\d+$/
+def rc_match = common_tag =~ /^rc\/\d+\.\d+\.\d+$/
+
+if ( ! release_match && ! rc_match )  {
+    common_tag = "origin/" + common_tag
+}
+
+git {
+    fetch 'git@gitlab.com:inspire1/smart-sell/infra/pipeline-modules.git', {
+        dir "${rootDir}/${download_path}"
+        tag "${common_tag}"
+    }
+}
+
+include 'app'
+include 'migration-sql'

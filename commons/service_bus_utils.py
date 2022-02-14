@@ -18,3 +18,11 @@ async def broadcast_sm(sm_msg: str):
         async with sender:
             await sender.send_messages(
                 ServiceBusMessage(sm_msg))
+
+
+async def send_message_to_queue(sm_msg: str, lookup_queue_name: str):
+    async with sb_client:
+        sender = sb_client.get_queue_sender(queue_name=lookup_queue_name)
+        async with sender:
+            await sender.send_messages(
+                ServiceBusMessage(sm_msg))

@@ -1,0 +1,10 @@
+---
+variables:
+  PROJECT_TYPE: python
+  USE_INIT_GRADLE: 'true'
+
+include:
+    - project: 'inspire1/smart-sell/infra/pipelines'
+      ref: master
+      file: pipeline.yml
+
