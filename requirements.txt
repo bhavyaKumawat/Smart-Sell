@@ -11,3 +11,5 @@ fastapi
 uvicorn
 bs4
 pymssql
+openpyxl
+lxml

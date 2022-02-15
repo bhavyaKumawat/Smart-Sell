@@ -10,38 +10,42 @@ import pprint
 from lb_user_svc.helpers.store_helper import read_store_cont, get_emp_rank, get_emp, get_store
 from lb_user_svc.helpers.utils import get_top
 
-
 from lb_user_svc.helpers.utils import find_rec_json
 
 container_name = os.environ["lb_container_name"]
 sort_by_col = 'SuccessSmartSellCount'
 
-
 logger = logging.getLogger()
 
 
-async def get_franchisee_id_by_till(till_no: int, store_df):
+def get_franchisee_id_by_till(till_no: int, store_df):
     rec_json = find_rec_json(till_no, "TillNumber", store_df)
-    logger.debug(f'rec_json{rec_json} store_df {store_df}....')
-    return rec_json[0]["FranchiseeId"]
+    if rec_json:
+        return rec_json[0]["FranchiseeId"]
+    else:
+        return ""
 
 
-async def get_franchisee_id_by_emp(emp_id: str, store_df):
+def get_franchisee_id_by_emp(emp_id: str, store_df):
     rec_json = find_rec_json(emp_id, "EmployeeId", store_df)
-    logger.debug(f'rec_json{rec_json} store_df {store_df}....')
-    return rec_json[0]["FranchiseeId"]
+    if rec_json:
+        return rec_json[0]["FranchiseeId"]
+    else:
+        return ""
 
 
-async def lb_dash_start( loc_id: str, till_no: int, rank_mode: str, emp_id: str = ""):
+async def lb_dash_start(loc_id: str, till_no: int, rank_mode: str, emp_id: str = ""):
     top_count = 10
     loc_id = loc_id.upper()
 
     store_df = await read_store_cont(loc_id, rank_mode)
 
-    if emp_id == "":
-        fran_id = await get_franchisee_id_by_till(till_no, store_df)
-    else:
-        fran_id = await get_franchisee_id_by_till(emp_id, store_df)
+    fran_id = ""
+    if not store_df.empty:
+        if emp_id == "":
+            fran_id = get_franchisee_id_by_till(till_no, store_df)
+        else:
+            fran_id = get_franchisee_id_by_emp(emp_id, store_df)
 
     fran_df, fran_emp_df = await asyncio.gather(read_fran_cont(fran_id, rank_mode),
                                                 read_fran_emp_cont(fran_id, rank_mode))
@@ -51,7 +55,6 @@ async def lb_dash_start( loc_id: str, till_no: int, rank_mode: str, emp_id: str 
     if not store_df.empty:
         emp = get_emp(emp_id, store_df)
         if bool(emp):
-            print(type(emp[0]['SuccessSmartSellCount']))
             response_json["employee"] = emp[0]
             emp_in_st_rank = get_emp_rank(emp_id, store_df)
             emp_in_net_rank = get_emp_network_rank(emp_id, fran_emp_df)
@@ -78,8 +81,7 @@ async def lb_dash_start( loc_id: str, till_no: int, rank_mode: str, emp_id: str 
         top_emp_network = get_top(fran_emp_df, top_count)
         response_json["top_emp_in_network"] = top_emp_network
 
-    # res_str = json.dumps(response_json)
-    pprint.pprint(response_json)
+    logger.debug(f'Response JSON {response_json}')
     return response_json
 
 
@@ -95,6 +97,5 @@ async def get_store_details(store_id, fran_id, rank_mode):
             }
             top_st = get_top(fran_df)
             response_json["top_store_in_network"] = top_st
-            pprint.pprint(response_json)
             return response_json
     return {}

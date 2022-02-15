@@ -11,7 +11,7 @@ logger = logging.getLogger('smartsell')
 
 async def sm_lookup(sm: Dict) -> Dict:
     try:
-        if sm["EmployeeId"] is "":
+        if sm["EmployeeId"] == "":
             emp_details = await get_employee_details(sm["TillNumber"])
             sm['EmployeeId'] = emp_details['EmployeeId']
         rest_no = await get_rest_number(sm['LocationId'])

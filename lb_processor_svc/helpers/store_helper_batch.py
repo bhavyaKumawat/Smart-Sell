@@ -16,7 +16,7 @@ def update_emp_rec_batch(store_json: Dict, sm: Dict) -> Dict:
             sm_amt = sm_element['SmartSellAmount']
             sm_declined = sm_element['SmartSellDeclined']
             emp_name = sm_element['EmployeeName']
-            till_no = sm_element['TillNumber']
+            till_no: int = sm_element['TillNumber']
             fran_id = sm_element['FranchiseeId']
 
             emp_exists = emp_id in store_df.values
@@ -32,6 +32,7 @@ def update_emp_rec_batch(store_json: Dict, sm: Dict) -> Dict:
                 else:
                     store_df.at[emp_rec.index[0], 'Percentage'] = round((orig_count / (orig_total + 1) * 100), 2)
                 store_df.at[emp_rec.index[0], 'TotalSmartSellCount'] = orig_total + 1
+                store_df.at[emp_rec.index[0], 'TillNumber'] = till_no
             else:
                 new_emp_rec = create_new_emp_json(emp_id, emp_name, till_no, fran_id,  sm_amt, sm_declined)
                 store_df = store_df.append(new_emp_rec, ignore_index=True)
@@ -41,9 +42,8 @@ def update_emp_rec_batch(store_json: Dict, sm: Dict) -> Dict:
 
 
 def create_emp_container_batch(sm: Dict):
-    new_emp_list = []
     column_names = ['EmployeeId', 'EmployeeName', 'SmartSellAmount', 'SuccessSmartSellCount', 'TotalSmartSellCount',
-                    'Percentage']
+                    'Percentage', 'FranchiseeId', 'TillNumber']
     store_df = pd.DataFrame(columns=column_names)
     for sm_element in sm:
         if till_number_exists(sm_element):
@@ -51,7 +51,7 @@ def create_emp_container_batch(sm: Dict):
             sm_amt = sm_element['SmartSellAmount']
             sm_declined = sm_element['SmartSellDeclined']
             emp_name = sm_element['EmployeeName']
-            till_no = sm_element['TillNumber']
+            till_no: int = sm_element['TillNumber']
             fran_id = sm_element['FranchiseeId']
 
             emp_exists = emp_id in store_df.values
@@ -67,9 +67,11 @@ def create_emp_container_batch(sm: Dict):
                 else:
                     store_df.at[emp_rec.index[0], 'Percentage'] = round((orig_count / (orig_total + 1) * 100), 2)
                 store_df.at[emp_rec.index[0], 'TotalSmartSellCount'] = orig_total + 1
+                store_df.at[emp_rec.index[0], 'TillNumber'] = till_no
             else:
                 new_emp_rec = create_new_emp_json(emp_id, emp_name, till_no, fran_id, sm_amt, sm_declined)
                 store_df = store_df.append(new_emp_rec, ignore_index=True)
+    store_df['TillNumber'] = store_df['TillNumber'].astype(int)
     return json.loads(store_df.to_json(orient='records'))
 
 

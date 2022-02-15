@@ -2,13 +2,13 @@ import os
 import json
 import asyncio
 import logging
-from commons.service_bus_utils import broadcast_sm
+from commons.service_bus_utils import broadcast_sm, send_message_to_queue
 from commons.blob_msi_util import write_sm_blob
 from commons.utils import get_ingest_key
 
 logger = logging.getLogger('smartsell')
 container_name = os.environ["lookup_error_container"]
-
+archive_queue = os.environ["archive_queue_name"]
 
 async def filter_and_broadcast(results, sm):
     sm_array = []
@@ -28,6 +28,7 @@ async def lookup_errors(results, sm):
             sm_array.append(sm[index])
     logging.debug(f'Sending errors to {container_name} Container.....{results.count(False)} of {len(results)}')
     await asyncio.gather(*(write_lookup_errors(sm_element) for sm_element in sm_array))
+    await send_message_to_queue(json.dumps(sm_array), archive_queue)
 
 
 async def write_lookup_errors(sm_element):

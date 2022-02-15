@@ -24,7 +24,6 @@ lookup_queue_name = os.environ["lookup_queue_name"]
 
 async def process_sm_message(sm: Dict) -> bool:
     try:
-        logger.debug(f'Processing Message for Null Values {lookup_queue_name}....')
         await sm_lookup(sm)
         return True
     except Exception as ex:
