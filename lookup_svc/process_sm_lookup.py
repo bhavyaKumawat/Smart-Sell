@@ -5,7 +5,6 @@ from lookup_svc.helpers.employee_details_helper import get_employee_details
 from commons.functional_helper.rest_number_helper import get_rest_number
 from commons.functional_helper.area_supervisor_helper import get_area_supervisor
 
-
 logger = logging.getLogger('smartsell')
 
 
@@ -18,11 +17,8 @@ async def sm_lookup(sm: Dict) -> Dict:
         franchisee_id = await get_area_supervisor(rest_no)
 
         sm['FranchiseeId'], sm['Rest_Number'] = franchisee_id, rest_no
+        sm['LocationId'] = sm['LocationId'].upper()
         return sm
     except Exception as ex:
         logger.exception(f'Exception while processing Queue Message: {ex!r}')
         return sm
-
-
-
-
