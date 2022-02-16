@@ -31,7 +31,7 @@ def get_fran_key(sm_element: Dict):
 
 def get_fran_emp_key(sm_element: Dict):
     fran_id = sm_element['FranchiseeId'] if sm_element.get("FranchiseeId") else 'arbys'
-    return '{0}/{1}.json'.format(get_dt_key(sm_element['TransactionDateTime']), fran_id+'-emp')
+    return '{0}/{1}.json'.format(get_dt_key(sm_element['TransactionDateTime']), fran_id + '-emp')
 
 
 def get_dt_key(transaction_date_time):
@@ -66,3 +66,15 @@ def till_number_exists(sm_element: Dict) -> bool:
         return True
     else:
         return False
+
+
+def get_dt_time_from_str(transaction_date_time: str):
+    date_format_str = "%m/%d/%Y %H:%M:%S %p"
+    date_obj = datetime.strptime(transaction_date_time, date_format_str)
+    return date_obj
+
+
+def get_now_date_time():
+    now = datetime.now()
+    sm_date_str = now.strftime('%m/%d/%Y %H:%M:%S %p')
+    return sm_date_str

@@ -21,15 +21,12 @@ archive_queue_name = os.environ["archive_queue_name"]
 
 
 async def process_sm_message(sm: Dict):
-    try:
-        query = await create_query(sm)
-        cursor, conn = await get_cursor()
-        cursor.execute(query)
-        logger.debug('Inserted data into database')
-        conn.commit()
-        logger.debug('Committing the transaction...')
-    except Exception as e:
-        logger.exception(f'Exception While Inserted data into database: {e!r}')
+    query = await create_query(sm)
+    cursor, conn = await get_cursor()
+    cursor.execute(query)
+    logger.debug('Inserted data into database')
+    conn.commit()
+    logger.debug('Committing the transaction...')
 
 
 async def process_sm_archive():
@@ -48,5 +45,5 @@ async def process_sm_archive():
                         await process_sm_message(sm)
                     receiver.complete_message(msg)
                     logger.debug(f'Message Removed from {archive_queue_name}....')
-    except (ClientAuthenticationError, ServiceBusAuthorizationError) as ca_error:
-        logger.exception(f'Exception While Creating Queue Receiver: {ca_error!r}')
+    except Exception as e:
+        logger.exception(f'Exception While Creating Queue Receiver: {e!r}')

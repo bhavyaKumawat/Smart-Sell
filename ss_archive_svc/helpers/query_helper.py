@@ -1,10 +1,10 @@
 from typing import Dict
-from commons.utils import get_dt_key, get_loc_id, get_now_key
+from commons.utils import get_dt_key, get_loc_id, get_now_key, get_dt_time_from_str, get_now_date_time
 
 
 async def create_query(sm: Dict) -> str:
     query = """INSERT INTO SmartSellLogs (
-                TransactionId,
+                TransactionId, 
                 CreatedBy,
                 CreatedOn,
                 OrderId,
@@ -20,16 +20,15 @@ async def create_query(sm: Dict) -> str:
                 TerminalId,
                 TerminalName,
                 LocationId,
-                StoreId,
-                TransactionDateTime,
-                RowCreatedOn)
+                StoreId, 
+                TransactionDateTime)
             VALUES
             """
 
     for sm_element in sm:
-        query += f"""( NEWID() ,
-                    '{"default"}',
-                    '{get_now_key()}',
+        query += f"""( '{sm_element["TransactionId"]}' ,
+                    '{sm_element["EmployeeId"]}',
+                    '{get_now_date_time()}',
                     '{sm_element["OrderId"]}',
                     '{sm_element["SmartSellItemId"]}',
                     '{sm_element["SmartSellGroupId"]}',
@@ -42,9 +41,8 @@ async def create_query(sm: Dict) -> str:
                     '{sm_element["EmployeeName"]}',
                     '{sm_element["TerminalId"]}',
                     '{sm_element["TerminalName"]}',
-                    NEWID(),
-                    '{get_loc_id(sm_element)}',
-                    '{get_dt_key(sm_element["TransactionDateTime"])}',
-                    '{get_now_key()}' ),"""
+                    '{sm_element["LocationId"]}',
+                    '{sm_element["Rest_Number"]}',
+                    '{get_dt_time_from_str(sm_element["TransactionDateTime"])}' ),"""
 
     return query[:-1] + ";"
