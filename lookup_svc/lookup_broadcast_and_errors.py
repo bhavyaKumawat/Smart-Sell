@@ -10,6 +10,7 @@ logger = logging.getLogger('smartsell')
 container_name = os.environ["lookup_error_container"]
 archive_queue = os.environ["archive_queue_name"]
 
+
 async def filter_and_broadcast(results, sm):
     sm_array = []
     for index, result in enumerate(results):

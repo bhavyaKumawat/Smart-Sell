@@ -28,5 +28,9 @@ def get_emp_rank(emp_id: str, store_df: DataFrame) -> int:
     return get_rank(emp_id, 'EmployeeId', store_df)
 
 
+def get_emp_rank_by_till(till_no: int, store_df: DataFrame) -> int:
+    return get_rank(till_no, 'TillNumber', store_df)
+
+
 def get_top_emp(count: int, store_df: DataFrame) -> Dict:
     return get_top(store_df, count)

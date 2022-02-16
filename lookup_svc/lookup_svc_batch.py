@@ -12,8 +12,6 @@ from azure.servicebus.exceptions import ServiceBusAuthorizationError
 from lookup_svc.lookup_broadcast_and_errors import filter_and_broadcast, lookup_errors
 from lookup_svc.process_sm_lookup import sm_lookup
 
-from lookup_svc.helpers.generate_tillno import batch_get_tills
-from lookup_svc.helpers import employee_details_helper
 
 logger = logging.getLogger('smartsell')
 
@@ -44,7 +42,6 @@ async def process_sm_lookup():
                     logger.debug("Received SmartSell Ingest Event: " + str(msg))
                     sm = json.loads(str(msg))
                     if sm:
-                        employee_details_helper.till_numbers = await batch_get_tills(employee_details_helper.tokens)
                         results = await asyncio.gather(*(process_sm_message(sm_element) for sm_element in sm))
                         await filter_and_broadcast(results, sm)
                         await lookup_errors(results, sm)

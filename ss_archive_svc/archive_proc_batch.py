@@ -1,16 +1,13 @@
-import asyncio
 import json
 import logging
 import os
 from typing import Dict
 
-from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import DefaultAzureCredential
 from azure.servicebus import ServiceBusClient
-from azure.servicebus.exceptions import ServiceBusAuthorizationError
 
 from ss_archive_svc.helpers.query_helper import create_query
-from ss_archive_svc.helpers.conn_helper import get_cursor
+from commons.functional_helper.conn_helper import get_cursor
 
 
 logger = logging.getLogger('smartsell')

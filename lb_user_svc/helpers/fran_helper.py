@@ -31,6 +31,10 @@ def get_emp_network_rank(emp_id: str, network_df: DataFrame) -> int:
     return get_rank(emp_id, 'EmployeeId', network_df)
 
 
+def get_emp_network_rank_by_till(till_no: int, network_df: DataFrame) -> int:
+    return get_rank(till_no, 'TillNumber', network_df)
+
+
 def get_top_emp_network(count: int, fran_emp_df: DataFrame) -> Dict:
     return get_top_store(count, fran_emp_df)
 

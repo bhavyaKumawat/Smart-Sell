@@ -32,7 +32,7 @@ def sort_df(col: str, df: DataFrame) -> DataFrame:
     return df
 
 
-def get_rank(key_id: str, col: str, df: DataFrame) -> int:
+def get_rank(key_id, col: str, df: DataFrame) -> int:
     rec = df.loc[df[col] == key_id]
     if not rec.empty:
         return int(rec.index[0]) + 1

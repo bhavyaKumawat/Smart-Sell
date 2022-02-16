@@ -3,10 +3,11 @@ import os
 import logging
 
 from lb_user_svc.helpers.fran_helper import read_fran_cont, read_fran_emp_cont, \
-    get_emp_network_rank, get_store_rank
+    get_emp_network_rank, get_store_rank, get_emp_network_rank_by_till
 from lb_user_svc.helpers.response import get_response_template
 
-from lb_user_svc.helpers.store_helper import read_store_cont, get_emp_rank, get_emp, get_store, get_emp_by_till
+from lb_user_svc.helpers.store_helper import read_store_cont, get_emp_rank, get_emp, get_store, get_emp_by_till, \
+    get_emp_rank_by_till
 from lb_user_svc.helpers.utils import get_top
 
 from lb_user_svc.helpers.utils import find_rec_json
@@ -55,8 +56,8 @@ async def lb_dash_start(loc_id: str, till_no: int, rank_mode: str, emp_id: str =
 
         if bool(emp):
             response_json["employee"] = emp[0]
-            emp_in_st_rank = get_emp_rank(emp_id, store_df)
-            emp_in_net_rank = get_emp_network_rank(emp_id, fran_emp_df)
+            emp_in_st_rank = get_emp_rank_by_till(till_no, store_df) if emp_id == "" else get_emp_rank(emp_id, store_df)
+            emp_in_net_rank = get_emp_network_rank_by_till(till_no, store_df) if emp_id == "" else get_emp_network_rank(emp_id, fran_emp_df)
             response_json["employee"]["rank"] = {
                 "restaurant": emp_in_st_rank,
                 "network": emp_in_net_rank

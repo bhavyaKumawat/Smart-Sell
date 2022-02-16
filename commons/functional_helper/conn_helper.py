@@ -2,6 +2,7 @@ import os
 import pymssql
 import pandas as pd
 
+
 async def get_cursor():
     server = os.environ["server"]
     database = os.environ["database"]
