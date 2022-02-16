@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 from fastapi import FastAPI, HTTPException, status
 
@@ -58,8 +59,7 @@ def heath_check():
     return {"status": "ok"}
 
 
-@leaderboard.get('/api/leaderboard/{emp_id}/{loc_id}/{till_no}/{rank_mode}', response_model=LeaderBoard,
+@leaderboard.get('/api/leaderboard/{loc_id}/{till_no}/{rank_mode}', response_model=LeaderBoard,
                  tags=["LeaderBoard"])
-async def dashboard(emp_id: str, loc_id: str, till_no: int, rank_mode: RankMode):
+async def dashboard(loc_id: str, till_no: int, rank_mode: RankMode, emp_id: Optional[str] = ""):
     return await lb_dash_start(loc_id, till_no, rank_mode.value, emp_id)
-

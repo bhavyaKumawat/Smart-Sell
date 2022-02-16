@@ -16,6 +16,10 @@ def get_emp(emp_id: str, store_df: DataFrame) -> Dict:
     return find_rec_json(emp_id, 'EmployeeId', store_df)
 
 
+def get_emp_by_till(till_no: int, store_df: DataFrame) -> Dict:
+    return find_rec_json(till_no, 'TillNumber', store_df)
+
+
 def get_store(store_id: str, fran_df: DataFrame) -> Dict:
     return find_rec_json(store_id, 'LocationId', fran_df)
 

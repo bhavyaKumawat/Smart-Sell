@@ -5,9 +5,8 @@ import logging
 from lb_user_svc.helpers.fran_helper import read_fran_cont, read_fran_emp_cont, \
     get_emp_network_rank, get_store_rank
 from lb_user_svc.helpers.response import get_response_template
-import pprint
 
-from lb_user_svc.helpers.store_helper import read_store_cont, get_emp_rank, get_emp, get_store
+from lb_user_svc.helpers.store_helper import read_store_cont, get_emp_rank, get_emp, get_store, get_emp_by_till
 from lb_user_svc.helpers.utils import get_top
 
 from lb_user_svc.helpers.utils import find_rec_json
@@ -39,7 +38,6 @@ async def lb_dash_start(loc_id: str, till_no: int, rank_mode: str, emp_id: str =
     loc_id = loc_id.upper()
 
     store_df = await read_store_cont(loc_id, rank_mode)
-
     fran_id = ""
     if not store_df.empty:
         if emp_id == "":
@@ -53,7 +51,8 @@ async def lb_dash_start(loc_id: str, till_no: int, rank_mode: str, emp_id: str =
     response_json = get_response_template()
 
     if not store_df.empty:
-        emp = get_emp(emp_id, store_df)
+        emp = get_emp_by_till(till_no, store_df) if emp_id == "" else get_emp(emp_id, store_df)
+
         if bool(emp):
             response_json["employee"] = emp[0]
             emp_in_st_rank = get_emp_rank(emp_id, store_df)

@@ -21,6 +21,7 @@ dictionary = asyncio.run(create_lookup_dictionary(container_name,
 async def get_rest_number(location_id: str) -> int:
     try:
         global dictionary
-        return int(dictionary[location_id][4:])
+        loc_id = dictionary.get(location_id.lower()) if dictionary.get(location_id.lower()) else dictionary.get(location_id.upper())
+        return int(loc_id[4:])
     except Exception as ex:
         logger.exception(f'Exception while getting Restaurant Number: {ex!r}')
