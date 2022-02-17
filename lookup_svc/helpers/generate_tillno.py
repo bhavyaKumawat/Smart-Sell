@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 logger = logging.getLogger()
 
 
-url = os.environ["url"]
+url = os.environ["lookup_url"]
 SOAPAction = os.environ["SOAPAction"]
 
 

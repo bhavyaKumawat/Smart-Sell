@@ -22,11 +22,9 @@ lookup_queue_name = os.environ["lookup_queue_name"]
 
 async def process_sm_message(sm: Dict) -> bool:
     try:
-        await sm_lookup(sm)
-        return True
+        return await sm_lookup(sm)
     except Exception as ex:
         logger.exception(f'Exception while processing Queue Message: {ex!r}')
-        return False
 
 
 async def process_sm_lookup():
