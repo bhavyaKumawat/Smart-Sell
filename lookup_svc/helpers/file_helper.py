@@ -21,3 +21,5 @@ async def create_lookup_dictionary(container_name: str, blob_name: str, index_co
     except Exception as ex:
         logger.exception(f'Exception while creating lookup Dictionary: {ex!r}')
         return {}
+
+
