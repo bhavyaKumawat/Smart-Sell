@@ -4,7 +4,7 @@ import logging
 from typing import Dict
 
 from commons.emp_details_helper.file_helper import create_lookup_dictionary
-from commons.emp_details_helper.generate_tillno import batch_get_tills
+from commons.emp_details_helper.generate_tillno import get_tills
 
 logger = logging.getLogger()
 
@@ -19,12 +19,12 @@ tokens = asyncio.run(create_lookup_dictionary(container_name,
                                               usecols=("LocationId", "LocationToken", "AccessToken"),
                                               orient="dict"))
 
-till_numbers = asyncio.run(batch_get_tills(tokens))
 
-
-async def get_employee_details(till_no: int) -> Dict:
+async def get_employee_details(till_no: int, loc_id: str) -> Dict:
     try:
-        global till_numbers
+        global tokens
+        token = tokens[loc_id]
+        till_numbers = asyncio.run(get_tills(tokens))
         return till_numbers[till_no]
 
     except Exception as ex:

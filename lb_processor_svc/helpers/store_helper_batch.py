@@ -33,6 +33,8 @@ def update_emp_rec_batch(store_json: Dict, sm: Dict) -> Dict:
                     store_df.at[emp_rec.index[0], 'Percentage'] = round((orig_count / (orig_total + 1) * 100), 2)
                 store_df.at[emp_rec.index[0], 'TotalSmartSellCount'] = orig_total + 1
                 store_df.at[emp_rec.index[0], 'TillNumber'] = till_no
+                store_df.at[emp_rec.index[0], 'EmployeeName'] = emp_name
+
             else:
                 new_emp_rec = create_new_emp_json(emp_id, emp_name, till_no, fran_id,  sm_amt, sm_declined)
                 store_df = store_df.append(new_emp_rec, ignore_index=True)

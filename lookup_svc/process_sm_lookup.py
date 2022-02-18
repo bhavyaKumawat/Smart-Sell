@@ -4,11 +4,12 @@ from typing import Dict
 from commons.emp_details_helper.employee_details_helper import get_employee_details
 from commons.emp_details_helper.rest_number_helper import get_rest_number
 from commons.emp_details_helper.area_supervisor_helper import get_area_supervisor
+from commons.utils import is_emp_id_null
 
 logger = logging.getLogger('smartsell')
 
 
-async def sm_lookup(sm: Dict) -> Dict:
+async def sm_lookup(sm: Dict) -> bool:
     try:
 
         sm['LocationId'] = sm['LocationId'].upper()
@@ -28,12 +29,11 @@ async def sm_lookup(sm: Dict) -> Dict:
 
 async def emp_id_lookup(sm):
     try:
-        if sm["EmployeeId"] == "":
-            emp_details = await get_employee_details(sm["TillNumber"])
-            if emp_details['EmployeeId'] == "":
+        if is_emp_id_null(sm["EmployeeId"]):
+            emp_details = await get_employee_details(sm["TillNumber"], sm['LocationId'])
+            if is_emp_id_null(emp_details):
                 return False
             sm['EmployeeId'] = emp_details['EmployeeId']
-
         return True
     except Exception as ex:
         logger.exception(f'Exception while Emp ID lookup: {ex!r}')
