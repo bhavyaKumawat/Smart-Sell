@@ -1,5 +1,6 @@
 from typing import Dict
-from commons.utils import get_dt_key, get_loc_id, get_now_key, get_dt_time_from_str, get_now_date_time
+
+from commons.utils import get_dt_time_from_str, get_now_date_time
 
 
 async def create_query(sm: Dict) -> str:
@@ -44,5 +45,6 @@ async def create_query(sm: Dict) -> str:
                     '{sm_element["LocationId"]}',
                     '{sm_element["Rest_Number"]}',
                     '{get_dt_time_from_str(sm_element["TransactionDateTime"])}' ),"""
+        print(query)
 
     return query[:-1] + ";"

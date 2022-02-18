@@ -10,6 +10,6 @@ pandas
 fastapi
 uvicorn
 bs4
-pymssql
-openpyxl
+py
+pyodbc
 lxml
