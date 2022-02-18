@@ -6,7 +6,7 @@ from typing import Dict
 from azure.identity import DefaultAzureCredential
 from azure.servicebus import ServiceBusClient
 from azure.servicebus.exceptions import ServiceBusAuthorizationError
-from commons.blob_msi_util import blob_exists, read_blob, write_sm_blob
+from commons.storage_helper.blob_msi_util import blob_exists, read_blob, write_sm_blob
 from commons.utils import get_store_key, get_fran_key, get_loc_id, get_fran_emp_key
 from azure.core.exceptions import ClientAuthenticationError
 import asyncio

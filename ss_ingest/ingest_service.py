@@ -2,13 +2,12 @@ import asyncio
 import json
 import logging
 import os
-from commons.blob_msi_util import write_sm_blob
-from commons.service_bus_utils import send_message_to_queue
+from commons.storage_helper.blob_msi_util import write_sm_blob
+from commons.servicebus_helper.service_bus_utils import send_message_to_queue
 from commons.utils import get_ingest_key
-from ss_ingest.statuslogs import process_status_logs
 
-from lookup_svc.helpers.generate_tillno import batch_get_tills
-from lookup_svc.helpers import employee_details_helper
+from commons.emp_details_helper.generate_tillno import batch_get_tills
+from commons.emp_details_helper import employee_details_helper
 
 logger = logging.getLogger()
 container_name = os.environ["sm_ingest_container"]
@@ -20,7 +19,6 @@ async def process_ingestion(sm):
     try:
         employee_details_helper.till_numbers = await batch_get_tills(employee_details_helper.tokens)
         blob_write_results = await asyncio.gather(*(perform_blob_ops(sm_element) for sm_element in sm))
-        await process_status_logs(sm, blob_write_results)
         await filter_and_send_message_to_queue(blob_write_results, sm)
 
     except Exception as ex:

@@ -1,10 +1,12 @@
 import asyncio
 import logging
-from typing import List
+from typing import List, Optional
 from fastapi import FastAPI, status
 from models.smartsell import SmartSell
 from models.status import Status
 from ss_ingest.ingest_service import process_ingestion
+from ss_ingest.statuslogs import process_status_logs
+from models.log import StatusLog
 
 description = """
 SmartSell Ingest API to send smart sell events from POS
@@ -46,4 +48,10 @@ async def ingest_ss(sm: List[SmartSell]):
         sm_array.append(sm_element.dict())
     asyncio.ensure_future(process_ingestion(sm_array))
     # response.status_code = status.HTTP_200_OK
+    return {"status": "success"}
+
+
+@ss_ingest.post('/api/status')
+async def write_status_logs(log: StatusLog):
+    await process_status_logs(log.dict())
     return {"status": "success"}

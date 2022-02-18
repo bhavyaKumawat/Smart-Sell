@@ -11,6 +11,7 @@ from lb_user_svc.helpers.store_helper import read_store_cont, get_emp_rank, get_
 from lb_user_svc.helpers.utils import get_top
 
 from lb_user_svc.helpers.utils import find_rec_json
+from commons.utils import is_emp_id_null
 
 container_name = os.environ["lb_container_name"]
 sort_by_col = 'SuccessSmartSellCount'
@@ -41,7 +42,7 @@ async def lb_dash_start(loc_id: str, till_no: int, rank_mode: str, emp_id: str =
     store_df = await read_store_cont(loc_id, rank_mode)
     fran_id = ""
     if not store_df.empty:
-        if emp_id == "":
+        if is_emp_id_null(emp_id):
             fran_id = get_franchisee_id_by_till(till_no, store_df)
         else:
             fran_id = get_franchisee_id_by_emp(emp_id, store_df)
@@ -52,12 +53,12 @@ async def lb_dash_start(loc_id: str, till_no: int, rank_mode: str, emp_id: str =
     response_json = get_response_template()
 
     if not store_df.empty:
-        emp = get_emp_by_till(till_no, store_df) if emp_id == "" else get_emp(emp_id, store_df)
+        emp = get_emp_by_till(till_no, store_df) if is_emp_id_null(emp_id) else get_emp(emp_id, store_df)
 
         if bool(emp):
             response_json["employee"] = emp[0]
-            emp_in_st_rank = get_emp_rank_by_till(till_no, store_df) if emp_id == "" else get_emp_rank(emp_id, store_df)
-            emp_in_net_rank = get_emp_network_rank_by_till(till_no, store_df) if emp_id == "" else get_emp_network_rank(emp_id, fran_emp_df)
+            emp_in_st_rank = get_emp_rank_by_till(till_no, store_df) if is_emp_id_null(emp_id) else get_emp_rank(emp_id, store_df)
+            emp_in_net_rank = get_emp_network_rank_by_till(till_no, store_df) if is_emp_id_null(emp_id) else get_emp_network_rank(emp_id, fran_emp_df)
             response_json["employee"]["rank"] = {
                 "restaurant": emp_in_st_rank,
                 "network": emp_in_net_rank

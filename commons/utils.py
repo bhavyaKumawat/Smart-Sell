@@ -78,3 +78,10 @@ def get_now_date_time():
     now = datetime.now()
     sm_date_str = now.strftime('%m/%d/%Y %H:%M:%S %p')
     return sm_date_str
+
+
+def is_emp_id_null(emp_id):
+    if emp_id == "" or emp_id == "0":
+        return True
+    else:
+        return False

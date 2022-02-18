@@ -9,7 +9,7 @@ from azure.identity import DefaultAzureCredential
 from azure.servicebus import ServiceBusClient
 from azure.servicebus.exceptions import ServiceBusAuthorizationError
 
-from commons.blob_msi_util import blob_exists, read_blob, write_sm_blob
+from commons.storage_helper.blob_msi_util import blob_exists, read_blob, write_sm_blob
 from commons.utils import get_store_key, get_fran_key, get_loc_id, get_fran_emp_key
 from lb_processor_svc.helpers.fran_helper_batch import proc_store_rec_batch, create_fran_container_batch
 from lb_processor_svc.helpers.store_helper_batch import update_emp_rec_batch, create_emp_container_batch

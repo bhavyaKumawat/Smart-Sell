@@ -1,9 +1,9 @@
 import logging
 from typing import Dict
 
-from lookup_svc.helpers.employee_details_helper import get_employee_details
-from commons.functional_helper.rest_number_helper import get_rest_number
-from commons.functional_helper.area_supervisor_helper import get_area_supervisor
+from commons.emp_details_helper.employee_details_helper import get_employee_details
+from commons.emp_details_helper.rest_number_helper import get_rest_number
+from commons.emp_details_helper.area_supervisor_helper import get_area_supervisor
 
 logger = logging.getLogger('smartsell')
 

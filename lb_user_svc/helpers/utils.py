@@ -5,7 +5,7 @@ from typing import Dict
 import pandas as pd
 from pandas import DataFrame
 
-from commons.blob_msi_util import read_blob
+from commons.storage_helper.blob_msi_util import read_blob
 
 # sort_by_col = 'SmartSellAmount'
 container_name = os.environ["lb_container_name"]

@@ -3,8 +3,8 @@ import asyncio
 import logging
 from typing import Dict
 
-from lookup_svc.helpers.file_helper import create_lookup_dictionary
-from lookup_svc.helpers.generate_tillno import batch_get_tills
+from commons.emp_details_helper.file_helper import create_lookup_dictionary
+from commons.emp_details_helper.generate_tillno import batch_get_tills
 
 logger = logging.getLogger()
 

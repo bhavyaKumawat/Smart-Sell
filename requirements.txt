@@ -10,6 +10,5 @@ pandas
 fastapi
 uvicorn
 bs4
-py
 pyodbc
 lxml

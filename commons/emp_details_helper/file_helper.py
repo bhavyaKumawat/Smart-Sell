@@ -1,6 +1,6 @@
 import logging
 import pandas as pd
-from commons.blob_msi_util import read_blob_as_bytes
+from commons.storage_helper.blob_msi_util import read_blob_as_bytes
 
 logger = logging.getLogger()
 

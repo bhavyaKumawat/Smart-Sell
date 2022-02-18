@@ -7,7 +7,7 @@ from azure.identity import DefaultAzureCredential
 from azure.servicebus import ServiceBusClient
 
 from ss_archive_svc.helpers.query_helper import create_query
-from commons.functional_helper.conn_helper import get_cursor
+from commons.db_helper.conn_helper import get_cursor
 
 logger = logging.getLogger('smartsell')
 
@@ -44,31 +44,3 @@ async def process_sm_archive():
     except Exception as e:
         logger.exception(f'Exception While Creating Queue Receiver: {e!r}')
 
-# async def process_sm_archive():
-#     try:
-#         sm = {
-#                 "CrewSmartSellTimeInMs": 13750,
-#                 "EmployeeId": "642085605",
-#                 "EmployeeName": "Merissa Treacle",
-#                 "Id": 3,
-#                 "IsSent": 0,
-#                 "LocationId": "4723b14e-9481-41fa-8161-d7865ae61b9c",
-#                 "OrderId": "29490690400259",
-#                 "Rest_Number": "",
-#                 "RuleId": 7,
-#                 "SmartSellAmount": 1.49,
-#                 "SmartSellDeclined": 1,
-#                 "SmartSellGroupId": 0,
-#                 "SmartSellItemId": "640213024",
-#                 "SmartSellLinkedItemId": "640212815",
-#                 "TerminalId": 640215136,
-#                 "TerminalName": "",
-#                 "TillNumber": 65537,
-#                 "TransactionDateTime": "2\/10\/2022 3:06:14 PM",
-#                 "TransactionId": "dd882cf3-fb6b-4ef4-bfcb-c47764817b21"
-#             }
-#
-#         await process_sm_message(sm)
-#
-#     except Exception as e:
-#         logger.exception(f'Exception While Creating Queue Receiver: {e!r}')

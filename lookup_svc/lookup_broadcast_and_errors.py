@@ -2,8 +2,8 @@ import os
 import json
 import asyncio
 import logging
-from commons.service_bus_utils import broadcast_sm, send_message_to_queue
-from commons.blob_msi_util import write_sm_blob
+from commons.servicebus_helper.service_bus_utils import broadcast_sm, send_message_to_queue
+from commons.storage_helper.blob_msi_util import write_sm_blob
 from commons.utils import get_ingest_key
 
 logger = logging.getLogger('smartsell')

@@ -2,7 +2,7 @@ import os
 import asyncio
 import logging
 
-from lookup_svc.helpers.file_helper import create_lookup_dictionary
+from commons.emp_details_helper.file_helper import create_lookup_dictionary
 
 logger = logging.getLogger()
 container_name = os.environ["sm_lookup_container"]
