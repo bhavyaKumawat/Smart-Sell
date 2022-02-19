@@ -1,18 +1,22 @@
 import logging
 import pandas as pd
 from commons.storage_helper.blob_msi_util import read_blob_as_bytes
+from typing import List
 
 logger = logging.getLogger()
 
 
 async def create_lookup_dictionary(container_name: str, blob_name: str, index_col: str, sheet_name: str = None,
-                                   skiprows: int = 0, usecols: tuple = None, orient: str = 'records') -> dict:
+                                   skiprows: int = 0, usecols: tuple = None, orient: str = 'records', uppercase_cols: List[str] = []) -> dict:
     try:
         blob_byte_data = await read_blob_as_bytes(container_name, blob_name)
         dataframe = pd.read_excel(blob_byte_data,
                                   sheet_name=sheet_name,
                                   usecols=usecols,
                                   skiprows=skiprows).dropna(axis=0, how='any')
+
+        for cols in uppercase_cols:
+            dataframe[cols] = dataframe[cols].str.upper()
 
         dictionary = dataframe.set_index(index_col).T.to_dict(orient)
         logger.debug(f'Creating lookup Dictionary for {blob_name}....')

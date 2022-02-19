@@ -12,21 +12,10 @@ url = os.environ["lookup_url"]
 SOAPAction = os.environ["SOAPAction"]
 
 
-# async def batch_get_tills(tokens_dict: Dict) -> Dict:
-#     try:
-#         till_numbers = {}
-#         tills = await asyncio.gather(*(get_till_numbers(tokens['LocationToken'], tokens['AccessToken']) for _, tokens in tokens_dict.items()))
-#         await asyncio.gather(*(parse_xml(data, till_numbers) for data in tills))
-#
-#         return till_numbers
-#     except Exception as ex:
-#         logger.exception(f'Exception while getting Till Number: {ex!r}')
-
-
-async def get_tills(tokens: Dict) -> Dict:
+async def get_tills(location_code: str, access_token: str) -> Dict:
     try:
         till_numbers = {}
-        tills = get_till_numbers(tokens['LocationToken'], tokens['AccessToken'])
+        tills = await get_till_numbers(location_code, access_token)
         await parse_xml(tills, till_numbers)
         return till_numbers
     except Exception as ex:

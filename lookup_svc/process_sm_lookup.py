@@ -31,7 +31,7 @@ async def emp_id_lookup(sm):
     try:
         if is_emp_id_null(sm["EmployeeId"]):
             emp_details = await get_employee_details(sm["TillNumber"], sm['LocationId'])
-            if is_emp_id_null(emp_details):
+            if emp_details == {}:
                 return False
             sm['EmployeeId'] = emp_details['EmployeeId']
         return True
