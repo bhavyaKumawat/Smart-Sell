@@ -15,7 +15,6 @@ storage_url = 'https://{0}.blob.core.windows.net/'.format(storage_acct_name)
 async def get_blob_client(container_name: str, blob_name: str) -> BlobClient:
     blob_client = BlobClient(account_url=storage_url, container_name=container_name, blob_name=blob_name,
                              credential=credential)
-    print(blob_client)
     return blob_client
 
 
