@@ -23,7 +23,7 @@ async def process_ingestion(sm):
 
 
 async def perform_blob_ops(sm_element):
-    blob_name = get_ingest_key(sm_element)
+    blob_name = await get_ingest_key(sm_element)
     result = await write_sm_blob(container_name, blob_name, sm_element, overwrite=False)
     return result
 

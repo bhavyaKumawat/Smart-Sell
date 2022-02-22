@@ -33,5 +33,5 @@ async def lookup_errors(results, sm):
 
 
 async def write_lookup_errors(sm_element):
-    blob_name = get_ingest_key(sm_element)
+    blob_name = await get_ingest_key(sm_element)
     await write_sm_blob(container_name, blob_name, sm_element, overwrite=False)

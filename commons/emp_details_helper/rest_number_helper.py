@@ -10,14 +10,6 @@ blob_name = os.environ["loc_restno_blob"]
 sheet_name = os.environ["loc_restno_sheet"]
 
 
-# dictionary = asyncio.run(create_lookup_dictionary(container_name,
-#                                                   blob_name,
-#                                                   index_col='LocationID',
-#                                                   sheet_name=sheet_name,
-#                                                   skiprows=1,
-#                                                   usecols=("Number", "LocationID")))
-
-
 dictionary = asyncio.run(create_lookup_dictionary(container_name,
                                                   blob_name,
                                                   index_col='LocationID',

@@ -12,3 +12,4 @@ uvicorn
 bs4
 pyodbc
 lxml
+azure-keyvault-secrets

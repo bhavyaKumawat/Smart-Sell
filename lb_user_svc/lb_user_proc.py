@@ -1,7 +1,9 @@
+import json
 import asyncio
 import os
 import logging
 
+from commons.storage_helper.blob_msi_util import read_blob
 from lb_user_svc.helpers.fran_helper import read_fran_cont, read_fran_emp_cont, \
     get_emp_network_rank, get_store_rank, get_emp_network_rank_by_till
 from lb_user_svc.helpers.response import get_response_template
@@ -14,38 +16,23 @@ from lb_user_svc.helpers.utils import find_rec_json
 from commons.utils import is_emp_id_null
 
 container_name = os.environ["lb_container_name"]
+lookup_container_name = os.environ["sm_lookup_container"]
+loc_fran_blob_name = os.environ["loc_fran_blob"]
+
 sort_by_col = 'SuccessSmartSellCount'
 
 logger = logging.getLogger()
-
-
-def get_franchisee_id_by_till(till_no: int, store_df):
-    rec_json = find_rec_json(till_no, "TillNumber", store_df)
-    if rec_json:
-        return rec_json[0]["FranchiseeId"]
-    else:
-        return ""
-
-
-def get_franchisee_id_by_emp(emp_id: str, store_df):
-    rec_json = find_rec_json(emp_id, "EmployeeId", store_df)
-    if rec_json:
-        return rec_json[0]["FranchiseeId"]
-    else:
-        return ""
 
 
 async def lb_dash_start(loc_id: str, till_no: int, rank_mode: str, emp_id: str = ""):
     top_count = 10
     loc_id = loc_id.upper()
 
-    store_df = await read_store_cont(loc_id, rank_mode)
-    fran_id = ""
-    if not store_df.empty:
-        if is_emp_id_null(emp_id):
-            fran_id = get_franchisee_id_by_till(till_no, store_df)
-        else:
-            fran_id = get_franchisee_id_by_emp(emp_id, store_df)
+    store_df, blob_str = await asyncio.gather(read_store_cont(loc_id, rank_mode),
+                                              read_blob(lookup_container_name, loc_fran_blob_name))
+
+    fran_json = json.loads(blob_str)
+    fran_id = fran_json[loc_id]
 
     fran_df, fran_emp_df = await asyncio.gather(read_fran_cont(fran_id, rank_mode),
                                                 read_fran_emp_cont(fran_id, rank_mode))
@@ -57,8 +44,10 @@ async def lb_dash_start(loc_id: str, till_no: int, rank_mode: str, emp_id: str =
 
         if bool(emp):
             response_json["employee"] = emp[0]
-            emp_in_st_rank = get_emp_rank_by_till(till_no, store_df) if is_emp_id_null(emp_id) else get_emp_rank(emp_id, store_df)
-            emp_in_net_rank = get_emp_network_rank_by_till(till_no, store_df) if is_emp_id_null(emp_id) else get_emp_network_rank(emp_id, fran_emp_df)
+            emp_in_st_rank = get_emp_rank_by_till(till_no, store_df) if is_emp_id_null(emp_id) else get_emp_rank(emp_id,
+                                                                                                                 store_df)
+            emp_in_net_rank = get_emp_network_rank_by_till(till_no, store_df) if is_emp_id_null(
+                emp_id) else get_emp_network_rank(emp_id, fran_emp_df)
             response_json["employee"]["rank"] = {
                 "restaurant": emp_in_st_rank,
                 "network": emp_in_net_rank

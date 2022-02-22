@@ -1,11 +1,12 @@
 from datetime import datetime
 import logging
+import asyncio
 from typing import Dict
 
 logger = logging.getLogger('smartsell')
 
 
-def get_ingest_key(sm_element: Dict):
+async def get_ingest_key(sm_element: Dict):
     return '{0}/{1}/{2}/{3}_{4}.json'.format(get_dt_key(sm_element['TransactionDateTime']), sm_element['LocationId'],
                                              sm_element['TerminalId'], str(sm_element['Id']),
                                              sm_element['TransactionId'])
@@ -77,6 +78,12 @@ def get_dt_time_from_str(transaction_date_time: str):
 def get_now_date_time():
     now = datetime.now()
     sm_date_str = now.strftime('%m/%d/%Y %H:%M:%S %p')
+    return sm_date_str
+
+
+def get_now_date():
+    now = datetime.now()
+    sm_date_str = now.strftime('%Y-%m-%d')
     return sm_date_str
 
 

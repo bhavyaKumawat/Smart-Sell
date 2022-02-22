@@ -28,9 +28,10 @@ async def process_sm_message(sm: Dict):
     loc_id = get_loc_id(sm[0])
     fran_emp_key = get_fran_emp_key(sm[0])
     rest_no = sm[0]["Rest_Number"]
+    fran_id = sm[0]["FranchiseeId"]
 
     store_json = await process_store(store_key, sm)
-    fran_json, fran_emp_json = await asyncio.gather(process_franchisee(fran_key, loc_id, rest_no, store_json),
+    fran_json, fran_emp_json = await asyncio.gather(process_franchisee(fran_key, loc_id, rest_no, fran_id, store_json),
                                                     process_emp_franchisee(fran_emp_key, sm))
     await asyncio.gather(write_sm_blob(container_name, store_key, store_json),
                          write_sm_blob(container_name, fran_key, fran_json),
@@ -56,6 +57,7 @@ async def process_store(blob_name: str,
 async def process_franchisee(blob_name: str,
                              store_id: str,
                              rest_no: str,
+                             fran_id: str,
                              store_json: Dict) -> Dict:
     if await blob_exists(container_name, blob_name):
         logger.info(f'Franchisee Exists: {blob_name}')
@@ -63,11 +65,11 @@ async def process_franchisee(blob_name: str,
         blob_str = await read_blob(container_name, blob_name)
         fran_cont_json = json.loads(blob_str)
 
-        updated_fran_json = proc_store_rec_batch(store_id, rest_no, fran_cont_json, store_json)
+        updated_fran_json = proc_store_rec_batch(store_id, rest_no, fran_id, fran_cont_json, store_json)
         logger.info(f'Franchisee Updated: {blob_name}')
         return updated_fran_json
     else:
-        new_fran_json = create_fran_container_batch(store_id, rest_no, store_json)
+        new_fran_json = create_fran_container_batch(store_id, rest_no, fran_id, store_json)
         logger.info(f'Created New Franchisee Record: {blob_name}')
         return new_fran_json
 

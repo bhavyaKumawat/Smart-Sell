@@ -46,6 +46,7 @@ async def ingest_ss(sm: List[SmartSell]):
     sm_array = []
     for sm_element in sm:
         sm_array.append(sm_element.dict())
+
     asyncio.ensure_future(process_ingestion(sm_array))
     # response.status_code = status.HTTP_200_OK
     return {"status": "success"}

@@ -5,6 +5,8 @@ import requests
 from typing import Dict
 from bs4 import BeautifulSoup
 
+from commons.utils import get_now_date
+
 logger = logging.getLogger()
 
 
@@ -27,11 +29,11 @@ async def get_till_numbers(location_token: str, access_token: str) -> str:
         global url, SOAPAction
         url = url
 
-        payload = """<?xml version=\"1.0\" encoding=\"utf-8\"?>
+        payload = f"""<?xml version=\"1.0\" encoding=\"utf-8\"?>
         <s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">
         <s:Body><GetTills xmlns=\"http://www.brinksoftware.com/webservices/sales/v2\">
         <request xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\">
-        <BusinessDate>2021-12-08T00:00:00</BusinessDate>
+        <BusinessDate>{get_now_date()}</BusinessDate>
         </request>
         </GetTills></s:Body></s:Envelope>"""
 

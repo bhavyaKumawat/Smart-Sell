@@ -25,6 +25,10 @@ def update_emp_rec_batch(store_json: Dict, sm: Dict) -> Dict:
                 orig_amount = emp_rec.at[emp_rec.index[0], 'SmartSellAmount']
                 orig_count = emp_rec.at[emp_rec.index[0], 'SuccessSmartSellCount']
                 orig_total = emp_rec.at[emp_rec.index[0], 'TotalSmartSellCount']
+
+                emp_name = emp_name if (emp_rec.at[emp_rec.index[0], 'EmployeeName']) == "" else emp_rec.at[
+                    emp_rec.index[0], 'EmployeeName']
+
                 if sm_declined == 0:
                     store_df.at[emp_rec.index[0], 'SmartSellAmount'] = orig_amount + sm_amt
                     store_df.at[emp_rec.index[0], 'SuccessSmartSellCount'] = orig_count + 1
@@ -36,7 +40,7 @@ def update_emp_rec_batch(store_json: Dict, sm: Dict) -> Dict:
                 store_df.at[emp_rec.index[0], 'EmployeeName'] = emp_name
 
             else:
-                new_emp_rec = create_new_emp_json(emp_id, emp_name, till_no, fran_id,  sm_amt, sm_declined)
+                new_emp_rec = create_new_emp_json(emp_id, emp_name, till_no, fran_id, sm_amt, sm_declined)
                 store_df = store_df.append(new_emp_rec, ignore_index=True)
         else:
             logger.info("TillNumber missing, ignoring the smart sell..")
@@ -102,7 +106,7 @@ def create_new_emp_json(emp_id: str,
                 'EmployeeName': emp_name,
                 'TillNumber': till_no,
                 'FranchiseeId': fran_id,
-                'SmartSellAmount': 0,
+                'SmartSellAmount': 0.0,
                 'SuccessSmartSellCount': 0,
                 'TotalSmartSellCount': 1,
                 'Percentage': 0
