@@ -34,7 +34,7 @@ def sort_df(col: str, df: DataFrame) -> DataFrame:
 
 def get_rank(key_id, col: str, df: DataFrame) -> int:
     rec = df.loc[df[col] == key_id]
-    if not rec.empty:
+    if (not rec.empty) and (rec.loc[rec.index[0]]["SuccessSmartSellCount"]):
         return int(rec.index[0]) + 1
     else:
         return 0

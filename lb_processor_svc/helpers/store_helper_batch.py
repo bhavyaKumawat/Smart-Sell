@@ -25,6 +25,7 @@ def update_emp_rec_batch(store_json: Dict, sm: Dict) -> Dict:
                 orig_amount = emp_rec.at[emp_rec.index[0], 'SmartSellAmount']
                 orig_count = emp_rec.at[emp_rec.index[0], 'SuccessSmartSellCount']
                 orig_total = emp_rec.at[emp_rec.index[0], 'TotalSmartSellCount']
+                orig_count, orig_total = float(orig_count), float(orig_total)
 
                 emp_name = emp_name if (emp_rec.at[emp_rec.index[0], 'EmployeeName']) == "" else emp_rec.at[
                     emp_rec.index[0], 'EmployeeName']
@@ -66,6 +67,8 @@ def create_emp_container_batch(sm: Dict):
                 orig_amount = emp_rec.at[emp_rec.index[0], 'SmartSellAmount']
                 orig_count = emp_rec.at[emp_rec.index[0], 'SuccessSmartSellCount']
                 orig_total = emp_rec.at[emp_rec.index[0], 'TotalSmartSellCount']
+                orig_count, orig_total = float(orig_count), float(orig_total)
+
                 if sm_declined == 0:
                     store_df.at[emp_rec.index[0], 'SmartSellAmount'] = orig_amount + sm_amt
                     store_df.at[emp_rec.index[0], 'SuccessSmartSellCount'] = orig_count + 1
@@ -97,7 +100,7 @@ def create_new_emp_json(emp_id: str,
                 'SmartSellAmount': sm_amt,
                 'SuccessSmartSellCount': 1,
                 'TotalSmartSellCount': 1,
-                'Percentage': 100
+                'Percentage': 100.0
             }
     else:
         return \
@@ -109,5 +112,5 @@ def create_new_emp_json(emp_id: str,
                 'SmartSellAmount': 0.0,
                 'SuccessSmartSellCount': 0,
                 'TotalSmartSellCount': 1,
-                'Percentage': 0
+                'Percentage': 0.0
             }
