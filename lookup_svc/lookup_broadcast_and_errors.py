@@ -9,6 +9,7 @@ from commons.utils import get_ingest_key
 logger = logging.getLogger('smartsell')
 container_name = os.environ["lookup_error_container"]
 archive_queue = os.environ["archive_queue_name"]
+broadcast_topic = os.environ["sm_broadcast_topic"]
 
 
 async def filter_and_broadcast(results, sm):
@@ -19,7 +20,7 @@ async def filter_and_broadcast(results, sm):
     if sm_array:
         sm_msg = json.dumps(sm_array)
         logging.debug(f'Publishing.....{results.count(True)} of {len(results)}')
-        await broadcast_sm(sm_msg)
+        await broadcast_sm(sm_msg, broadcast_topic)
 
 
 async def lookup_errors(results, sm):

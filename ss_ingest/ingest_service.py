@@ -6,14 +6,12 @@ from commons.storage_helper.blob_msi_util import write_sm_blob
 from commons.servicebus_helper.service_bus_utils import send_message_to_queue
 from commons.utils import get_ingest_key
 
-
 logger = logging.getLogger()
 container_name = os.environ["sm_ingest_container"]
 lookup_queue_name = os.environ["lookup_queue_name"]
 
 
 async def process_ingestion(sm):
-
     try:
         blob_write_results = await asyncio.gather(*(perform_blob_ops(sm_element) for sm_element in sm))
         await filter_and_send_message_to_queue(blob_write_results, sm)

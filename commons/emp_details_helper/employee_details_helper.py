@@ -3,7 +3,7 @@ from typing import Dict
 
 from commons.emp_details_helper import rest_number_helper
 from commons.emp_details_helper.generate_tillno import get_tills
-from commons.key_vault.key_vault_helper import secret
+from commons.keyvault_helper.key_vault_util import secret
 
 logger = logging.getLogger()
 
