@@ -24,10 +24,10 @@ async def read_container(blob_name: str, mode: str = "Volume") -> DataFrame:
     return sort_df(sort_by_col, cont_df)
 
 
-def sort_df(col: str, df: DataFrame) -> DataFrame:
+def sort_df(cols_array: list[str], df: DataFrame) -> DataFrame:
     if df.empty:
         return df
-    df.sort_values(by=[col], inplace=True, ascending=False)
+    df.sort_values(by=cols_array, inplace=True, ascending=False)
     df.reset_index(drop=True, inplace=True)
     return df
 
@@ -52,6 +52,6 @@ def find_rec_json(key_id: str, col: str, df: DataFrame) -> Dict:
 
 def get_sort_col_name(mode: str = "Volume"):
     if mode == 'Volume':
-        return 'SmartSellAmount'
+        return ['SuccessSmartSellCount', 'SmartSellAmount']
     else:
-        return 'Percentage'
+        return ['Percentage']

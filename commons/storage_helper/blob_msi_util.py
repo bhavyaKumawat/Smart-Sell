@@ -1,7 +1,7 @@
 import os
 import logging
 from typing import Dict
-from azure.storage.blob.aio import BlobClient
+from azure.storage.blob.aio import BlobClient, ContainerClient
 import json
 from azure.identity.aio import DefaultAzureCredential
 
@@ -56,3 +56,16 @@ async def read_blob_as_bytes(container_name: str, blob_name: str):
         logger.exception(f'Exception while reading Blob: {ex!r}')
         return bytes()
 
+
+async def get_container_client(container_name: str) -> ContainerClient:
+    container_client = ContainerClient(account_url=storage_url, container_name=container_name, credential=credential)
+    return container_client
+
+
+async def delete_directory(container_name: str, dir_name: str):
+    try:
+        container_client = await get_container_client(container_name)
+        blobs = container_client.list_blobs(name_starts_with=dir_name)
+        await container_client.delete_blobs(*[b async for b in blobs])
+    except Exception as ex:
+        logger.exception(f'Exception while deleting Blobs: {ex!r}')

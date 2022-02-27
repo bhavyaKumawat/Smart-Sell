@@ -1,21 +1,22 @@
 FROM @dockerRegistry/@ImageBaseAppPython39 as build-venv
 USER root
 COPY requirements.txt /requirements.txt
-#### pyodbc setup
-curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list > /etc/apt/sources.list.d/mssql-release.list
-
-sudo apt-get update
-sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
-# optional: for bcp and sqlcmd
-sudo ACCEPT_EULA=Y apt-get install -y mssql-tools18
-echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
-source ~/.bashrc
-#### end of pyodbc
 RUN /venv/bin/pip install --disable-pip-version-check --no-cache-dir -r /requirements.txt
+
+FROM debian:11-slim as odbc-driver
+RUN apt-get update \
+    && apt-get install -y curl gnupg libodbc1 \
+    && curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+    && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+    && apt-get update \
+    && ACCEPT_EULA=Y apt-get install -y msodbcsql18
 
 # Copy the virtualenv into a distroless image
 FROM gcr.io/distroless/python3-debian11
+
 WORKDIR /app
 COPY --from=build-venv /venv /venv
+COPY --from=odbc-driver /opt/microsoft /opt/microsoft
+COPY --from=odbc-driver /usr/lib/x86_64-linux-gnu/libodbc* /usr/lib/x86_64-linux-gnu/
+COPY --from=odbc-driver /etc/odbc* /etc/
 COPY . .
