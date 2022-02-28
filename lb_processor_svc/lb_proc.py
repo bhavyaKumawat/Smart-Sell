@@ -3,7 +3,7 @@ import logging
 import os
 from typing import Dict
 
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.servicebus import ServiceBusClient
 from azure.servicebus.exceptions import ServiceBusAuthorizationError
 from commons.storage_helper.blob_msi_util import blob_exists, read_blob, write_sm_blob

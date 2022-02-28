@@ -5,8 +5,8 @@ import os
 from typing import Dict
 
 from azure.core.exceptions import ClientAuthenticationError
-from azure.identity import DefaultAzureCredential
-from azure.servicebus import ServiceBusClient
+from azure.identity.aio import DefaultAzureCredential
+from azure.servicebus.aio import ServiceBusClient
 from azure.servicebus.exceptions import ServiceBusAuthorizationError
 
 from commons.storage_helper.blob_msi_util import blob_exists, read_blob, write_sm_blob
@@ -17,7 +17,7 @@ from lb_processor_svc.helpers.store_helper_batch import update_emp_rec_batch, cr
 logger = logging.getLogger('smartsell')
 
 sb_ns_endpoint = 'sb://{0}.servicebus.windows.net'.format(os.environ['sb_ns_name'])
-credential = DefaultAzureCredential()
+
 lb_queue_name = os.environ["lb_queue_name"]
 container_name = os.environ["lb_container_name"]
 
@@ -93,19 +93,21 @@ async def process_emp_franchisee(blob_name: str,
 
 async def process_sm_lb():
     try:
-        sb_client = ServiceBusClient(sb_ns_endpoint, credential)
-        with sb_client:
-            logger.debug('Inside service bus client')
-            receiver = sb_client.get_queue_receiver(queue_name=lb_queue_name)
-            logger.debug('After Receiver is created....')
-            with receiver:
-                logger.debug(f'Receiver Active on {lb_queue_name}')
-                for msg in receiver:
-                    logger.debug("Received SmartSell Event: " + str(msg))
-                    sm = json.loads(str(msg))
-                    if sm:
-                        await process_sm_message(sm)
-                    receiver.complete_message(msg)
-                    logger.debug(f'Message Removed from {lb_queue_name}....')
+        credential = DefaultAzureCredential()
+        async with credential:
+            sb_client = ServiceBusClient(sb_ns_endpoint, credential)
+            async with sb_client:
+                logger.debug('Inside service bus client')
+                receiver = sb_client.get_queue_receiver(queue_name=lb_queue_name)
+                logger.debug('After Receiver is created....')
+                async with receiver:
+                    logger.debug(f'Receiver Active on {lb_queue_name}')
+                    async for msg in receiver:
+                        logger.debug("Received SmartSell Event: " + str(msg))
+                        sm = json.loads(str(msg))
+                        if sm:
+                            await process_sm_message(sm)
+                        await receiver.complete_message(msg)
+                        logger.debug(f'Message Removed from {lb_queue_name}....')
     except (ClientAuthenticationError, ServiceBusAuthorizationError) as ca_error:
         logger.exception(f'Exception While Creating Queue Receiver: {ca_error!r}')
