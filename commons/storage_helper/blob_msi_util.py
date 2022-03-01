@@ -11,13 +11,6 @@ storage_acct_name = os.environ["storage_acct_name"]
 storage_url = 'https://{0}.blob.core.windows.net/'.format(storage_acct_name)
 
 
-# async def get_blob_client(container_name: str, blob_name: str) -> BlobClient:
-#     credential = DefaultAzureCredential()
-#     blob_client = BlobClient(account_url=storage_url, container_name=container_name, blob_name=blob_name,
-#                              credential=credential)
-#     return blob_client
-
-
 async def blob_exists(container_name: str, blob_name: str) -> bool:
     credential = DefaultAzureCredential()
     async with credential:
@@ -68,14 +61,3 @@ async def read_blob_as_bytes(container_name: str, blob_name: str):
         logger.exception(f'Exception while reading Blob: {ex!r}')
         return bytes()
 
-
-async def delete_directory(container_name: str, dir_name: str):
-    try:
-        credential = DefaultAzureCredential()
-        async with credential:
-            container_client = ContainerClient(account_url=storage_url, container_name=container_name,
-                                               credential=credential)
-            blobs = container_client.list_blobs(name_starts_with=dir_name)
-            await container_client.delete_blobs(*[b async for b in blobs])
-    except Exception as ex:
-        logger.exception(f'Exception while deleting Blobs: {ex!r}')
