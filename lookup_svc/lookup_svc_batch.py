@@ -28,8 +28,7 @@ async def process_sm_message(sm: Dict) -> bool:
 
 async def process_sm_lookup():
     try:
-        credential = DefaultAzureCredential()
-        async with credential:
+        async with DefaultAzureCredential() as credential:
             sb_client = ServiceBusClient(sb_ns_endpoint, credential)
             async with sb_client:
                 logger.debug('Inside service bus client')

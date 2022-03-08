@@ -7,16 +7,14 @@ vault_url = os.environ["vault_url"]
 
 
 async def get_secret(secret_name: str) -> str:
-    credential = DefaultAzureCredential()
-    async with credential:
+    async with DefaultAzureCredential() as credential:
         secret_client = SecretClient(vault_url=vault_url, credential=credential)
         secret = await secret_client.get_secret(secret_name)
         return secret.value
 
 
 async def get_secret_b64(secret_name: str) -> str:
-    credential = DefaultAzureCredential()
-    async with credential:
+    async with DefaultAzureCredential() as credential:
         secret_client = SecretClient(vault_url=vault_url, credential=credential)
         secret = await secret_client.get_secret(secret_name)
         b_string = base64.b64decode(secret.value)
