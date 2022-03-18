@@ -6,7 +6,7 @@ from typing import Dict
 from commons.utils import get_now_key
 from commons.db_helper.conn_helper import get_cursor
 from commons.storage_helper.blob_msi_util import blob_exists, read_blob, delete_directory
-from utils_svc.helpers.query_helper import create_query
+from commons.db_helper.single_query_helper import create_query
 from utils_svc.helpers.utils import get_store_key, get_fran_key, get_fran_emp_key
 
 logger = logging.getLogger()
@@ -70,6 +70,6 @@ async def insert_sm(sm: Dict):
         cursor.execute(query)
         logger.debug('Inserted data into database')
         conn.commit()
-        logger.debug('Committing the transaction...')
+        logger.debug('Transaction Committed...')
     except Exception as ex:
         logger.exception(f'Exception while Inserted data into database: {ex!r}')

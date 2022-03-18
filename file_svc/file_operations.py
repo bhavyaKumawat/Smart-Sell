@@ -7,7 +7,7 @@ from commons.storage_helper.blob_msi_util import write_file, read_file
 from fastapi import UploadFile, Response
 
 logger = logging.getLogger()
-container_name = os.environ["files_container"]
+container_name = os.environ["doc_container"]
 
 
 async def upload_file(file: UploadFile, path: str):

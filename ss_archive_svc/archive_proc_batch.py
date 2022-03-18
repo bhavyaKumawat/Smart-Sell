@@ -6,7 +6,7 @@ from typing import Dict
 from azure.identity.aio import DefaultAzureCredential
 from azure.servicebus.aio import ServiceBusClient
 
-from ss_archive_svc.helpers.query_helper import create_query
+from commons.db_helper.bulk_query_helper import create_query
 from commons.db_helper.conn_helper import get_cursor
 
 logger = logging.getLogger('smartsell')

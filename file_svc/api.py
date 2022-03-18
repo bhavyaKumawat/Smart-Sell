@@ -9,7 +9,7 @@ from fastapi import FastAPI, status, UploadFile, Query, Response
 from file_svc.file_operations import upload_file, download_file
 
 description = """
-SmartSell API to upload files to container
+SmartSell API to upload and download files to container
 """
 tags_metadata = [
     {
@@ -39,13 +39,14 @@ def heath_check():
 @ss_file.post('/api/upload')
 async def upload_files(files: list[UploadFile], path: str = Query("", description="path separator /", )):
     await asyncio.gather(*(upload_file(file, path) for file in files))
-    return {"filenames": [file.filename for file in files]}
+    return {"filenames": [os.path.join(path, file.filename) for file in files]}
 
 
 @ss_file.post('/api/download')
 async def download_files(blob_name: str, bg_tasks: BackgroundTasks):
     try:
         file, content_type, name = await download_file(blob_name)
+        name = os.path.basename(name)
 
         with open(name, "w+b") as f:
             f.write(file)

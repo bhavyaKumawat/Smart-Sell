@@ -8,7 +8,7 @@ from lb_user_svc.helpers.utils import read_container, get_rank
 
 
 async def read_fran_cont(fran_id: str, mode: str) -> DataFrame:
-    if fran_id != '':
+    if fran_id != '' and fran_id is not None:
         blob_name = get_fran_now_key(fran_id)
         df = await read_container(blob_name, mode)
         return df
@@ -16,7 +16,7 @@ async def read_fran_cont(fran_id: str, mode: str) -> DataFrame:
 
 
 async def read_fran_emp_cont(fran_id: str, mode: str) -> DataFrame:
-    if fran_id != '':
+    if fran_id != '' and fran_id is not None:
         blob_name = get_fran_emp_now_key(fran_id)
         df = await read_container(blob_name, mode)
         return df
