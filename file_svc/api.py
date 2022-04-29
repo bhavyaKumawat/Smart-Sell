@@ -51,6 +51,9 @@ async def download_files(blob_name: str, bg_tasks: BackgroundTasks):
         with open(name, "w+b") as f:
             f.write(file)
             bg_tasks.add_task(os.remove, name)
-            return FileResponse(name, media_type=content_type, background=bg_tasks)
+            headers = {
+                'Content-Disposition': f'attachment; filename="{name}"'
+            }
+            return FileResponse(name, media_type=content_type, background=bg_tasks, headers=headers)
     except Exception as ex:
         return {"Error": f'{ex!r}'}
