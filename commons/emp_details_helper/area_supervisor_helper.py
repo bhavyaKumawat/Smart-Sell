@@ -23,4 +23,5 @@ async def get_area_supervisor(rest_number: int) -> str:
         return dictionary[rest_number].replace(', ', '-')
     except Exception as ex:
         logger.exception(f'Exception while getting Franchisee Id: {ex!r}')
+        return ""
 

@@ -32,7 +32,7 @@ async def lb_dash_start(loc_id: str, till_no: int, rank_mode: str, emp_id: str =
                                               read_blob(lookup_container_name, loc_fran_blob_name))
 
     fran_json = json.loads(blob_str)
-    fran_id = fran_json[loc_id]
+    fran_id = fran_json.get(loc_id, None)
 
     fran_df, fran_emp_df = await asyncio.gather(read_fran_cont(fran_id, rank_mode),
                                                 read_fran_emp_cont(fran_id, rank_mode))

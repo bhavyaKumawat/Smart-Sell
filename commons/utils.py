@@ -7,9 +7,12 @@ logger = logging.getLogger('smartsell')
 
 
 async def get_ingest_key(sm_element: Dict):
-    return '{0}/{1}/{2}/{3}_{4}.json'.format(get_dt_key(sm_element['TransactionDateTime']), sm_element['LocationId'],
-                                             sm_element['TerminalId'], str(sm_element['Id']),
-                                             sm_element['TransactionId'])
+    try:
+        return '{0}/{1}/{2}/{3}_{4}.json'.format(get_dt_key(sm_element['TransactionDateTime']), sm_element['LocationId'],
+                                                 sm_element['TerminalId'], str(sm_element['Id']),
+                                                 sm_element['TransactionId'])
+    except Exception as ex:
+        raise
 
 
 def get_emp_key(sm_element: Dict):
@@ -36,10 +39,13 @@ def get_fran_emp_key(sm_element: Dict):
 
 
 def get_dt_key(transaction_date_time):
-    date_format_str = "%m/%d/%Y %H:%M:%S %p"
-    date_obj = datetime.strptime(transaction_date_time, date_format_str)
-    sm_date_str = date_obj.strftime('%m-%d-%Y')
-    return sm_date_str
+    try:
+        date_format_str = "%m/%d/%Y %H:%M:%S %p"
+        date_obj = datetime.strptime(transaction_date_time, date_format_str)
+        sm_date_str = date_obj.strftime('%m-%d-%Y')
+        return sm_date_str
+    except Exception as ex:
+        raise
 
 
 def get_store_now_key(store_id: str):
@@ -81,9 +87,9 @@ def get_now_date_time():
     return sm_date_str
 
 
-def get_now_date():
-    now = datetime.now()
-    sm_date_str = now.strftime('%Y-%m-%d')
+def get_sm_tran_date(transaction_date_time: str):
+    date_obj = get_dt_time_from_str(transaction_date_time)
+    sm_date_str = date_obj.strftime('%Y-%m-%d')
     return sm_date_str
 
 
