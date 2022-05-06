@@ -3,16 +3,15 @@ import asyncio
 import os
 import logging
 
-from commons.storage_helper.blob_msi_util import read_blob
 from lb_user_svc.helpers.fran_helper import read_fran_cont, read_fran_emp_cont, \
     get_emp_network_rank, get_store_rank, get_emp_network_rank_by_till
+from lb_user_svc.helpers.fran_id_lookup import get_fran_id
 from lb_user_svc.helpers.response import get_response_template
 
 from lb_user_svc.helpers.store_helper import read_store_cont, get_emp_rank, get_emp, get_store, get_emp_by_till, \
     get_emp_rank_by_till
 from lb_user_svc.helpers.utils import get_top
 
-from lb_user_svc.helpers.utils import find_rec_json
 from commons.utils import is_emp_id_null
 
 container_name = os.environ["lb_container_name"]
@@ -28,11 +27,8 @@ async def lb_dash_start(loc_id: str, till_no: int, rank_mode: str, emp_id: str =
     top_count = 10
     loc_id = loc_id.upper()
 
-    store_df, blob_str = await asyncio.gather(read_store_cont(loc_id, rank_mode),
-                                              read_blob(lookup_container_name, loc_fran_blob_name))
-
-    fran_json = json.loads(blob_str)
-    fran_id = fran_json.get(loc_id, None)
+    store_df = await read_store_cont(loc_id, rank_mode)
+    fran_id = await get_fran_id(loc_id)
 
     fran_df, fran_emp_df = await asyncio.gather(read_fran_cont(fran_id, rank_mode),
                                                 read_fran_emp_cont(fran_id, rank_mode))

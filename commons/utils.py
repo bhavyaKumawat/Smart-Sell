@@ -98,3 +98,10 @@ def is_emp_id_null(emp_id):
         return True
     else:
         return False
+
+
+def is_till_number_null(till_no):
+    if till_no == 0:
+        return True
+    else:
+        return False
