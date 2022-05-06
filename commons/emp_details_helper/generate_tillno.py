@@ -5,7 +5,6 @@ import requests
 from typing import Dict
 from bs4 import BeautifulSoup
 
-from commons.utils import get_now_date
 
 logger = logging.getLogger()
 
@@ -14,17 +13,18 @@ url = os.environ["lookup_url"]
 SOAPAction = os.environ["SOAPAction"]
 
 
-async def get_tills(location_code: str, access_token: str) -> Dict:
+async def get_tills(location_code: str, access_token: str, transaction_date: str) -> Dict:
     try:
         till_numbers = {}
-        tills = await get_till_numbers(location_code, access_token)
+        tills = await get_till_numbers(location_code, access_token, transaction_date)
         await parse_xml(tills, till_numbers)
         return till_numbers
     except Exception as ex:
         logger.exception(f'Exception while getting Till Number: {ex!r}')
+        raise
 
 
-async def get_till_numbers(location_token: str, access_token: str) -> str:
+async def get_till_numbers(location_token: str, access_token: str, transaction_date: str) -> str:
     try:
         global url, SOAPAction
         url = url
@@ -33,7 +33,7 @@ async def get_till_numbers(location_token: str, access_token: str) -> str:
         <s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">
         <s:Body><GetTills xmlns=\"http://www.brinksoftware.com/webservices/sales/v2\">
         <request xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\">
-        <BusinessDate>{get_now_date()}</BusinessDate>
+        <BusinessDate>{transaction_date}</BusinessDate>
         </request>
         </GetTills></s:Body></s:Envelope>"""
 
@@ -52,6 +52,7 @@ async def get_till_numbers(location_token: str, access_token: str) -> str:
 
     except Exception as ex:
         logger.exception(f'Exception while getting Employee Details from Till Number: {ex!r}')
+        raise
 
 
 async def parse_xml(data: str, till_numbers: Dict):
@@ -61,3 +62,4 @@ async def parse_xml(data: str, till_numbers: Dict):
             till_numbers[int(item.find('Number').getText())] = {'EmployeeId': item.find('EmployeeId').getText()}
     except Exception as ex:
         logger.exception(f'Exception while Parsing XML...: {ex!r}')
+        raise

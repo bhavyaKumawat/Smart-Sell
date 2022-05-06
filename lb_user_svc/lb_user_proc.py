@@ -32,7 +32,7 @@ async def lb_dash_start(loc_id: str, till_no: int, rank_mode: str, emp_id: str =
                                               read_blob(lookup_container_name, loc_fran_blob_name))
 
     fran_json = json.loads(blob_str)
-    fran_id = fran_json[loc_id]
+    fran_id = fran_json.get(loc_id, None)
 
     fran_df, fran_emp_df = await asyncio.gather(read_fran_cont(fran_id, rank_mode),
                                                 read_fran_emp_cont(fran_id, rank_mode))
@@ -67,7 +67,7 @@ async def lb_dash_start(loc_id: str, till_no: int, rank_mode: str, emp_id: str =
         top_st = get_top(fran_df, top_count)
         response_json["top_store_in_network"] = top_st
 
-    if not fran_df.empty:
+    if not fran_emp_df.empty:
         top_emp_network = get_top(fran_emp_df, top_count)
         response_json["top_emp_in_network"] = top_emp_network
 

@@ -4,10 +4,9 @@ import logging
 import os
 from typing import Dict
 
-from azure.core.exceptions import ClientAuthenticationError
 from azure.identity.aio import DefaultAzureCredential
 from azure.servicebus.aio import ServiceBusClient
-from azure.servicebus.exceptions import ServiceBusAuthorizationError
+from azure.servicebus import ServiceBusReceiveMode
 
 from commons.storage_helper.blob_msi_util import blob_exists, read_blob, write_sm_blob
 from commons.utils import get_store_key, get_fran_key, get_loc_id, get_fran_emp_key
@@ -93,21 +92,24 @@ async def process_emp_franchisee(blob_name: str,
 
 async def process_sm_lb():
     try:
-        credential = DefaultAzureCredential()
-        async with credential:
+        async with DefaultAzureCredential() as credential:
             sb_client = ServiceBusClient(sb_ns_endpoint, credential)
             async with sb_client:
                 logger.debug('Inside service bus client')
-                receiver = sb_client.get_queue_receiver(queue_name=lb_queue_name)
+                receiver = sb_client.get_queue_receiver(queue_name=lb_queue_name,
+                                                        receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE)
                 logger.debug('After Receiver is created....')
                 async with receiver:
                     logger.debug(f'Receiver Active on {lb_queue_name}')
                     async for msg in receiver:
-                        logger.debug("Received SmartSell Event: " + str(msg))
-                        sm = json.loads(str(msg))
-                        if sm:
-                            await process_sm_message(sm)
-                        await receiver.complete_message(msg)
-                        logger.debug(f'Message Removed from {lb_queue_name}....')
-    except (ClientAuthenticationError, ServiceBusAuthorizationError) as ca_error:
-        logger.exception(f'Exception While Creating Queue Receiver: {ca_error!r}')
+                        try:
+                            logger.debug("Received SmartSell Event: " + str(msg))
+                            sm = json.loads(str(msg))
+                            if sm:
+                                await process_sm_message(sm)
+                            logger.debug(f'Message Processed from {lb_queue_name}....')
+                        except Exception as ex:
+                            logger.exception(f'Exception while processing Message: {ex!r}')
+
+    except Exception as ex:
+        logger.exception(f'Exception While Creating Queue Receiver: {ex!r}')

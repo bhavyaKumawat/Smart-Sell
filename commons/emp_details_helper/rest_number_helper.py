@@ -27,3 +27,4 @@ async def get_rest_number(location_id: str) -> int:
         return int(loc_id[4:])
     except Exception as ex:
         logger.exception(f'Exception while getting Restaurant Number: {ex!r}')
+        return ""

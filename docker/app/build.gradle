@@ -1,3 +1,15 @@
+def copySources = [
+  'requirements.txt',
+  '.dockerignore',
+  'commons/**',
+  'models/**',
+  'lb_processor_svc/**',
+  'lb_user_svc/**',
+  'ss_ingest/**',
+  'lookup_svc/**',
+  'ss_archive_svc/**'
+]
+
 tasks.replace("copy", Copy).configure {
     copy {
         from("src") {
@@ -9,42 +21,15 @@ tasks.replace("copy", Copy).configure {
         into("build")
     }
     copy {
-        from("../../") {
-            include '.dockerignore'
-            include 'requirements.txt'
+        from("src/files")
+        into("build/files")
+    }
+    copySources.each { source ->
+        println('copy ' + source)
+        copy {
+            from '../../'
+            into 'build'
+            include source
         }
-        into("build")
-    }
-    copy {
-        from("../../commons")
-        into("build/commons")
-    }
-    copy {
-        from("../../models")
-        into("build/models")
-    }
-    copy {
-        from("../../models")
-        into("build/models")
-    }
-    copy {
-        from("../../lb_processor_svc")
-        into("build/lb_processor_svc")
-    }
-    copy {
-        from("../../lb_user_svc")
-        into("build/lb_user_svc")
-    }
-    copy {
-        from("../../ss_ingest")
-        into("build/ss_ingest")
-    }
-    copy {
-        from("../../lookup_svc")
-        into("build/lookup_svc")
-    }
-    copy {
-        from("../../ss_archive_svc")
-        into("build/ss_archive_svc")
     }
 }
