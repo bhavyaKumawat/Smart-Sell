@@ -1,25 +1,38 @@
 #!/bin/bash
 export host_name=""
 export port_no=9000
-nohup python3 -m ss_ingest > ./log/ss_ingest.log &
+nohup python3 -m ingest > ./log1/ingest.log &
 export host_name=""
 export port_no=9001
-nohup python3 -m lb_user_svc > ./log/lb_user_svc.log &
-nohup python3 -m lb_processor_svc > ./log/lb_processor_svc.log &
-nohup python3 -m lookup_svc > ./log/lookup_svc.log &
-nohup python3 -m ss_archive_svc > ./log/ss_archive_svc.log &
+run=1
+nohup python3 -m lb_user > ./log$run/lb_user.log &
+
+#lookup
+nohup python3 -m lookup > ./log$run/lookup.log &
+nohup python3 -m lookup > ./log$run/lookup1.log &
+nohup python3 -m lookup > ./log$run/lookup2.log &
+nohup python3 -m lookup > ./log$run/lookup3.log &
+
+# leaderboard
+nohup python3 -m lb_processor > ./log$run/lb_processor.log &
+nohup python3 -m lb_processor > ./log$run/lb_processor1.log &
+nohup python3 -m lb_processor > ./log$run/lb_processor2.log &
+nohup python3 -m lb_processor > ./log$run/lb_processor3.log &
+
+nohup python3 -m archive > ./log$run/archive.log &
 export host_name=""
 export port_no=9002
-nohup python3 -m utils_svc > ./log/utils_svc.log &
+nohup python3 -m utils > ./log$run/utils.log &
 export host_name=""
 export port_no=9003
-nohup python3 -m file_svc > ./log/file_svc.log &
+nohup python3 -m file > ./log$run/file.log &
 export host_name=""
 export port_no=9004
-nohup python3 -m email_svc > ./log/email_svc.log &
-export host_name=""
-export port_no=9005
-nohup python3 -m lookup_svc_retro > ./log/lookup_svc_retro.log &
-export host_name=""
-export port_no=9006
-nohup python3 -m ss_archive_svc_retro > ./log/ss_archive_svc_retro.log &
+nohup python3 -m emailss > ./log$run/emailss.log &
+
+nohup python3 -m lookup_retro > ./log$run/lookup_retro.log &
+nohup python3 -m lookup_retro > ./log$run/lookup_retro1.log &
+nohup python3 -m lookup_retro > ./log$run/lookup_retro2.log &
+nohup python3 -m lookup_retro > ./log$run/lookup_retro3.log &
+
+nohup python3 -m archive_retro > ./log$run/archive_retro.log &
