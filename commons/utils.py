@@ -1,6 +1,5 @@
-from datetime import datetime
 import logging
-import asyncio
+from datetime import datetime
 from typing import Dict
 
 logger = logging.getLogger('smartsell')
@@ -95,6 +94,13 @@ def get_sm_tran_date(transaction_date_time: str):
 
 def is_emp_id_null(emp_id):
     if emp_id == "" or emp_id == "0":
+        return True
+    else:
+        return False
+
+
+def is_till_number_null(till_no):
+    if till_no == 0:
         return True
     else:
         return False
