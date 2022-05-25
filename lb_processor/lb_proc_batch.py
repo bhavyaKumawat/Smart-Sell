@@ -9,6 +9,7 @@ from azure.servicebus.aio import ServiceBusClient
 from azure.storage.blob.aio import BlobLeaseClient
 
 from commons.msi_helper.msi_util import get_msi_cred
+from commons.servicebus_helper.batching_and_prefetching import merge_messages, bifurcate_messages
 from commons.storage_helper.blob_msi_util import blob_exists, read_blob, write_sm_blob
 from commons.utils import get_store_key, get_fran_key, get_loc_id, get_fran_emp_key
 from lb_processor.helpers.fran_helper_batch import proc_store_rec_batch, create_fran_container_batch
@@ -20,6 +21,7 @@ sb_ns_endpoint = 'sb://{0}.servicebus.windows.net'.format(os.environ['sb_ns_name
 
 lb_queue_name = os.environ["lb_queue_name"]
 container_name = os.environ["lb_container_name"]
+prefetch_count = int(os.environ["prefetch_count"])
 
 
 async def process_sm_message(sm: Dict):
@@ -117,19 +119,30 @@ async def process_sm_lb():
             async with sb_client:
                 logger.debug('Inside service bus client')
                 receiver = sb_client.get_queue_receiver(queue_name=lb_queue_name,
-                                                        receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE)
+                                                        receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
+                                                        prefetch_count=prefetch_count)
                 logger.debug('After Receiver is created....')
                 async with receiver:
                     logger.debug(f'Receiver Active on {lb_queue_name}')
-                    async for msg in receiver:
-                        try:
-                            logger.debug("Received SmartSell Event: " + str(msg))
-                            sm = json.loads(str(msg))
-                            if sm:
-                                await process_sm_message(sm)
-                            logger.debug(f'Message Processed from {lb_queue_name}....')
-                        except Exception as ex:
-                            logger.exception(f'Exception while processing Message: {ex!r}')
+
+                    while True:
+                        messages = await receiver.receive_messages(max_message_count=prefetch_count)
+                        if not messages:
+                            break
+                        merged = await merge_messages(messages)
+                        logger.debug(f'The receiver fetched and merged a batch of {len(messages)} messages.')
+
+                        bifurcated = await bifurcate_messages(merged)
+                        logger.debug(f'Bifurcated the batch into {len(bifurcated)} parts based on the location ID.')
+
+                        for sm in bifurcated:
+                            try:
+                                logger.debug("Received SmartSell Event: " + str(sm))
+                                if sm:
+                                    await process_sm_message(sm)
+                                logger.debug(f'Message Processed from {lb_queue_name}....')
+                            except Exception as ex:
+                                logger.exception(f'Exception while processing Message: {ex!r}')
 
     except Exception as ex:
         logger.exception(f'Exception While Creating Queue Receiver: {ex!r}')

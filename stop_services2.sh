@@ -1,8 +1,9 @@
 #!/bin/bash
-run=1
+run=2
 nohup pkill -f ingest > ./log$run/ingest.log &
 nohup pkill -f lb_user > ./log$run/lb_user.log &
 nohup pkill -f lb_processor > ./log$run/lb_processor.log &
+nohup pkill -f lb_processor > ./log$run/lb_processor1.log &
 
 nohup pkill -f lookup > ./log$run/lookup.log &
 nohup pkill -f lookup > ./log$run/lookup1.log &

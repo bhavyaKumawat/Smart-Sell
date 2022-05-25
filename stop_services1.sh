@@ -5,7 +5,6 @@ nohup pkill -f lb_user > ./log$run/lb_user.log &
 nohup pkill -f lb_processor > ./log$run/lb_processor.log &
 
 nohup pkill -f lookup > ./log$run/lookup.log &
-nohup pkill -f lookup > ./log$run/lookup1.log &
 
 nohup pkill -f archive > ./log$run/archive.log &
 nohup pkill -f lookup_retro > ./log$run/lookup_retro.log &

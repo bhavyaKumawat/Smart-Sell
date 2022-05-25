@@ -1,23 +1,21 @@
 #!/bin/bash
+run=2
+
 export host_name=""
 export port_no=9000
-nohup python3 -m ingest > ./log1/ingest.log &
+nohup python3 -m ingest > ./log$run/ingest.log &
 export host_name=""
 export port_no=9001
-run=1
+
 nohup python3 -m lb_user > ./log$run/lb_user.log &
 
 #lookup
 nohup python3 -m lookup > ./log$run/lookup.log &
-#nohup python3 -m lookup > ./log$run/lookup1.log &
-#nohup python3 -m lookup > ./log$run/lookup2.log &
-#nohup python3 -m lookup > ./log$run/lookup3.log &
+nohup python3 -m lookup > ./log$run/lookup1.log &
 
 # leaderboard
 nohup python3 -m lb_processor > ./log$run/lb_processor.log &
-#nohup python3 -m lb_processor > ./log$run/lb_processor1.log &
-#nohup python3 -m lb_processor > ./log$run/lb_processor2.log &
-#nohup python3 -m lb_processor > ./log$run/lb_processor3.log &
+nohup python3 -m lb_processor > ./log$run/lb_processor1.log &
 
 nohup python3 -m archive > ./log$run/archive.log &
 export host_name=""
